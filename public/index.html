@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ErgoType - Handbuilt Dactyl Cygnus Keyboards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    /* ── Dark theme ── */
+    :root, [data-theme="dark"] {
+      --bg:            #161616;
+      --bg-card:       #1f1f1f;
+      --bg-deep:       #282828;
+      --bg-deeper:     #111111;
+      --border:        #2e2e2e;
+      --border-mid:    #3d3d3d;
+      --border-hover:  #555;
+      --text:          #f0ece8;
+      --text-muted:    #a09890;
+      --text-dim:      #6a6460;
+      --text-dimmer:   #403c3a;
+      --accent:        #e11f26;
+      --accent-hover:  #ff3a40;
+      --accent-dark:   #b01820;
+      --accent-darker: #7a1018;
+      --accent-deep:   #4a0a0e;
+      --heading:       #f5f0ec;
+      --price:         #e11f26;
+      --placeholder-bg:   #1a1a1a;
+      --placeholder-text: #555;
+      --row-divider:   #242424;
+      --th-bg:         #222;
+      --footer-text:   #3a3a3a;
+      --toggle-track:  #2e2e2e;
+      --toggle-thumb:  #e11f26;
+      --nav-bg:        #161616ee;
+    }
+
+    /* ── Light theme ── */
+    [data-theme="light"] {
+      --bg:            #f0efee;
+      --bg-card:       #e8e6e4;
+      --bg-deep:       #dfdcda;
+      --bg-deeper:     #f5f4f3;
+      --border:        #ccc9c6;
+      --border-mid:    #b8b4b0;
+      --border-hover:  #888;
+      --text:          #1a1818;
+      --text-muted:    #4a4644;
+      --text-dim:      #7a7674;
+      --text-dimmer:   #aaa8a6;
+      --accent:        #c41920;
+      --accent-hover:  #e11f26;
+      --accent-dark:   #8a1218;
+      --accent-darker: #5c0c10;
+      --accent-deep:   #f5d0d2;
+      --heading:       #0e0e0e;
+      --price:         #c41920;
+      --placeholder-bg:   #e0dedc;
+      --placeholder-text: #888;
+      --row-divider:   #d4d1ce;
+      --th-bg:         #dedad8;
+      --footer-text:   #aaa8a6;
+      --toggle-track:  #ccc9c6;
+      --toggle-thumb:  #c41920;
+      --nav-bg:        #f0efeeee;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.7;
+      transition: background 0.35s, color 0.35s;
+    }
+
+    .inner { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade   { animation: fadeUp 0.7s ease both; }
+    .fade-1 { animation-delay: 0.05s; }
+    .fade-2 { animation-delay: 0.18s; }
+    .fade-3 { animation-delay: 0.30s; }
+
+    .reveal {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--accent-hover); }
+    a:visited { color: var(--accent-dark); }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 36px 0; transition: border-color 0.35s; }
+
+    p { margin-bottom: 14px; color: var(--text-muted); }
+
+    /* ── Theme toggle ── */
+    .theme-toggle-wrap {
+      position: fixed; top: 16px; right: 18px; z-index: 200;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .toggle-icon { font-size: 0.7rem; color: var(--text-dim); user-select: none; transition: color 0.3s; }
+    .toggle-track {
+      position: relative; width: 42px; height: 22px;
+      background: var(--toggle-track); border-radius: 11px; cursor: pointer;
+      border: 1px solid var(--border-mid); transition: background 0.35s, border-color 0.35s;
+    }
+    .toggle-track::after {
+      content: ''; position: absolute; top: 2px; left: 2px;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--toggle-thumb);
+      transition: transform 0.3s cubic-bezier(.4,0,.2,1), background 0.35s;
+    }
+    [data-theme="light"] .toggle-track::after { transform: translateX(20px); }
+
+    /* ── Sticky Nav ── */
+    .site-nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.35s, border-color 0.35s;
+    }
+    .nav-inner {
+      max-width: 1000px; margin: 0 auto; padding: 0 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 52px;
+    }
+    .nav-logo {
+      font-size: 1.05rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--heading); transition: color 0.35s;
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex; gap: 24px; list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.13em;
+      text-transform: uppercase; color: var(--text-dim); transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* Hamburger */
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px; cursor: pointer;
+      background: none; border: none; padding: 4px;
+    }
+    .hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: var(--text-muted); border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-menu {
+      display: none; flex-direction: column;
+      background: var(--bg-card); border-bottom: 1px solid var(--border);
+      padding: 12px 20px 16px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-size: 0.78rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--text-muted);
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+      transition: color 0.2s;
+    }
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu a:hover { color: var(--accent); }
+
+    /* ── Hero / Header ── */
+    .site-header {
+      padding: 64px 0 40px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .site-header .logo {
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--heading); transition: color 0.35s;
+    }
+    .site-header .logo span { color: var(--accent); }
+    .site-header .tagline {
+      font-size: clamp(0.7rem, 2vw, 0.85rem); font-weight: 300; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--text-muted); margin-top: 10px; transition: color 0.35s;
+    }
+    .site-header .meta {
+      font-size: 0.75rem; color: var(--text-dim); margin-top: 6px;
+      letter-spacing: 0.1em; transition: color 0.35s;
+    }
+
+    /* ── Carousel ── */
+    .carousel-section { padding: 36px 0; }
+    .carousel-wrap {
+      position: relative; overflow: hidden;
+      background: var(--bg-deeper); border: 1px solid var(--border);
+      border-radius: 2px; user-select: none;
+    }
+    .carousel-track {
+      display: flex; transition: transform 0.45s cubic-bezier(.4,0,.2,1);
+    }
+    .carousel-slide {
+      min-width: 100%; position: relative;
+    }
+    .carousel-slide img {
+      width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block;
+    }
+    /* Placeholder slides */
+    .carousel-slide .slide-placeholder {
+      width: 100%; aspect-ratio: 16/9;
+      background: var(--bg-deep);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 10px; color: var(--text-dim); font-size: 0.78rem; letter-spacing: 0.1em;
+    }
+    .slide-placeholder .ph-icon { font-size: 2.4rem; opacity: 0.25; }
+    .slide-placeholder .ph-label { font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.5; }
+
+    .carousel-btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--bg-deeper); border: 1px solid var(--border-mid);
+      color: var(--text); cursor: pointer; z-index: 10;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; transition: background 0.2s, border-color 0.2s, color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .carousel-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .carousel-btn.prev { left: 12px; }
+    .carousel-btn.next { right: 12px; }
+
+    .carousel-dots {
+      display: flex; justify-content: center; gap: 7px;
+      padding: 14px 0 4px;
+    }
+    .carousel-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--border-mid); cursor: pointer;
+      transition: background 0.25s, transform 0.2s;
+      border: none; padding: 0;
+    }
+    .carousel-dot.active {
+      background: var(--accent); transform: scale(1.3);
+    }
+
+    .carousel-caption {
+      text-align: center; font-size: 0.72rem; color: var(--text-dim);
+      font-style: italic; letter-spacing: 0.06em; padding-top: 8px;
+    }
+
+    /* ── Section ── */
+    .section { padding: 40px 0; }
+
+    h2 {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 20px;
+      padding-bottom: 8px; border-bottom: 1px solid var(--border);
+      transition: color 0.35s, border-color 0.35s;
+    }
+
+    /* ── Product grid ── */
+    .product-grid { display: flex; gap: 36px; align-items: flex-start; }
+    .product-main { flex: 1; min-width: 0; }
+    .product-sidebar { width: 250px; flex-shrink: 0; }
+
+    .price-tag {
+      display: inline-block; background: var(--accent-deep);
+      border: 1px solid var(--accent-dark);
+      padding: 10px 18px; margin-bottom: 20px;
+      font-size: 1rem; font-weight: 700; color: var(--accent-hover);
+      letter-spacing: 0.04em; transition: background 0.35s, border-color 0.35s;
+      border-left: 3px solid var(--accent);
+    }
+    .price-tag small {
+      display: block; font-size: 0.68rem; font-weight: 400;
+      color: var(--text-dim); margin-top: 3px; letter-spacing: 0.08em;
+    }
+
+    blockquote {
+      background: var(--bg-card); border-left: 3px solid var(--accent-dark);
+      padding: 14px 18px; margin: 18px 0; font-size: 0.81rem;
+      color: var(--text-muted); line-height: 1.75;
+      transition: background 0.35s, border-color 0.35s;
+    }
+    blockquote b { color: var(--text); }
+
+    .sidebar-box {
+      background: var(--bg-card); border: 1px solid var(--border);
+      padding: 18px 18px; margin-bottom: 12px;
+      transition: background 0.35s, border-color 0.35s;
+    }
+    .sidebar-box .sb-title {
+      display: block; font-size: 0.67rem; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 12px;
+    }
+    .sidebar-box ul { list-style: none; padding: 0; }
+    .sidebar-box ul li {
+      font-size: 0.8rem; color: var(--text-muted); padding: 5px 0;
+      border-bottom: 1px solid var(--row-divider);
+      transition: color 0.35s, border-color 0.35s;
+    }
+    .sidebar-box ul li:last-child { border-bottom: none; }
+    .sidebar-box ul li::before { content: "— "; color: var(--accent-dark); }
+
+    /* ── Gallery (secondary) ── */
+    .gallery-note { font-size: 0.75rem; color: var(--text-dim); font-style: italic; margin-bottom: 14px; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .g-wrap {
+      background: var(--bg-card); border: 1px solid var(--border);
+      overflow: hidden; transition: border-color 0.25s, background 0.35s;
+    }
+    .g-wrap:hover { border-color: var(--accent-dark); }
+    .g-wrap img { width: 100%; display: block; transition: transform 0.4s ease; }
+    .g-wrap:hover img { transform: scale(1.04); }
+    .g-cap { font-size: 0.68rem; color: var(--text-dim); padding: 5px 8px; letter-spacing: 0.07em; }
+    .gif-wrap {
+      background: var(--bg-card); border: 1px solid var(--border); margin-top: 8px;
+      overflow: hidden; transition: border-color 0.25s, background 0.35s;
+    }
+    .gif-wrap:hover { border-color: var(--accent-dark); }
+    .gif-wrap img { width: 100%; display: block; }
+    .gif-wrap .g-cap { padding: 6px 8px; }
+
+    /* ── Placeholder ── */
+    .placeholder {
+      color: var(--placeholder-text); font-style: italic; font-size: 0.8rem;
+      background: var(--placeholder-bg); border: 1px dashed var(--border-mid);
+      padding: 8px 14px; margin-bottom: 14px; transition: background 0.35s;
+    }
+
+    /* ── Tables ── */
+    table.process, table.pricing { width: 100%; border-collapse: collapse; }
+    table.process th, table.pricing th {
+      background: var(--th-bg); color: var(--accent); font-size: 0.67rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      padding: 10px 14px; text-align: left; border-bottom: 2px solid var(--accent-dark);
+      transition: background 0.35s;
+    }
+    table.process td, table.pricing td {
+      padding: 10px 14px; border-bottom: 1px solid var(--row-divider);
+      font-size: 0.83rem; color: var(--text-muted); vertical-align: top;
+      transition: background 0.15s, color 0.35s;
+    }
+    table.process tr:hover td, table.pricing tr:hover td { background: var(--bg-card); }
+    table.process td:first-child { font-weight: 600; color: var(--text); white-space: nowrap; width: 175px; }
+    table.pricing td.price-col { font-weight: 700; color: var(--accent); }
+    .pricing-note { font-size: 0.74rem; color: var(--text-dim); margin-top: 12px; }
+
+    /* ── FAQ ── */
+    .faq-item { border-bottom: 1px solid var(--row-divider); padding: 14px 0; transition: border-color 0.35s; }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-item .q { font-weight: 600; font-size: 0.87rem; color: var(--text); margin-bottom: 5px; }
+    .faq-item .a { font-size: 0.82rem; color: var(--text-muted); }
+
+    /* ── Contact ── */
+    .contact-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 0; border-bottom: 1px solid var(--row-divider); transition: border-color 0.35s;
+      flex-wrap: wrap;
+    }
+    .contact-row .clabel {
+      font-size: 0.67rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--text-dim); width: 78px; flex-shrink: 0;
+    }
+    .contact-row .cval { font-size: 0.87rem; color: var(--text-muted); }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-block; font-family: 'Montserrat', sans-serif;
+      font-size: 0.69rem; font-weight: 700; letter-spacing: 0.13em;
+      text-transform: uppercase; padding: 10px 22px; cursor: pointer;
+      border: 1px solid var(--accent-dark); background: transparent; color: var(--accent);
+      transition: background 0.2s, color 0.2s, border-color 0.2s; text-decoration: none;
+    }
+    .btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+    .btn-sm { font-size: 0.63rem; padding: 5px 12px; }
+    .copy-confirm { display:none; font-size: 0.74rem; color: #6aaa4a; font-weight: 600; margin-left: 6px; }
+    .cta-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+
+    /* ── Footer ── */
+    .site-footer {
+      text-align: center; padding: 28px 0 20px;
+      font-size: 0.73rem; color: var(--footer-text); letter-spacing: 0.1em;
+      line-height: 2.2; border-top: 1px solid var(--border);
+      transition: color 0.35s, border-color 0.35s;
+    }
+    .site-footer a { color: var(--text-dim); }
+    .site-footer a:hover { color: var(--accent); }
+    .tagline-foot { font-style: italic; color: var(--border-mid); margin-top: 6px; font-size: 0.78rem; }
+
+    /* ─────────────── MOBILE ─────────────── */
+    @media (max-width: 700px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .theme-toggle-wrap { top: 14px; right: 56px; }
+
+      .site-header { padding: 44px 0 28px; }
+
+      .product-grid { flex-direction: column; gap: 20px; }
+      .product-sidebar { width: 100%; }
+
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+
+      table.process td:first-child { white-space: normal; width: auto; }
+
+      .contact-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+      .contact-row .clabel { width: auto; }
+
+      .cta-buttons { flex-direction: column; }
+      .cta-buttons .btn { text-align: center; }
+
+      .carousel-btn { width: 32px; height: 32px; font-size: 0.85rem; }
+      .carousel-btn.prev { left: 6px; }
+      .carousel-btn.next { right: 6px; }
+    }
+
+    @media (max-width: 420px) {
+      .gallery-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Theme toggle ── -->
+<div class="theme-toggle-wrap">
+  <span class="toggle-icon">☀</span>
+  <div class="toggle-track" id="themeToggle" role="button" aria-label="Toggle light/dark mode" tabindex="0"></div>
+  <span class="toggle-icon">☾</span>
+</div>
+
+<!-- ── Sticky nav ── -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#top">Ergo<span>Type</span></a>
+    <ul class="nav-links">
+      <li><a href="#product">Product</a></li>
+      <li><a href="#photos">Photos</a></li>
+      <li><a href="#story">Story</a></li>
+      <li><a href="#process">Process</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#product"  class="mobile-link">Product</a>
+    <a href="#photos"   class="mobile-link">Photos</a>
+    <a href="#story"    class="mobile-link">Story</a>
+    <a href="#process"  class="mobile-link">Process</a>
+    <a href="#pricing"  class="mobile-link">Pricing</a>
+    <a href="#faq"      class="mobile-link">FAQ</a>
+    <a href="#contact"  class="mobile-link">Contact</a>
+  </div>
+</nav>
+
+<!-- ── Header ── -->
+<div id="top">
+<header class="site-header fade fade-1">
+  <div class="inner">
+    <div class="logo">Ergo<span>Type</span></div>
+    <div class="tagline">Handbuilt ergonomic keyboards &mdash; made to order, made by hand</div>
+    <div class="meta">Slovenia &bull; EU shipping free &bull; every keyboard is different</div>
+  </div>
+</header>
+
+<!-- ── Carousel ── -->
+<div class="carousel-section fade fade-2">
+  <div class="inner">
+    <div class="carousel-wrap" id="carousel"
+         data-start-x="" data-start-scroll="">
+      <div class="carousel-track" id="carouselTrack">
+
+        <!-- SLIDE 1 — replace src with your image -->
+        <div class="carousel-slide">
+          <div class="slide-placeholder">
+            <div class="ph-icon">⌨</div>
+            <div class="ph-label">YOUR_PHOTO_1.jpg</div>
+          </div>
+          <!-- <img src="YOUR_PHOTO_1.jpg" alt="Dactyl Cygnus front view"> -->
+        </div>
+
+        <!-- SLIDE 2 -->
+        <div class="carousel-slide">
+          <div class="slide-placeholder">
+            <div class="ph-icon">⌨</div>
+            <div class="ph-label">YOUR_PHOTO_2.jpg</div>
+          </div>
+          <!-- <img src="YOUR_PHOTO_2.jpg" alt="Side view"> -->
+        </div>
+
+        <!-- SLIDE 3 -->
+        <div class="carousel-slide">
+          <div class="slide-placeholder">
+            <div class="ph-icon">⌨</div>
+            <div class="ph-label">YOUR_PHOTO_3.jpg</div>
+          </div>
+          <!-- <img src="YOUR_PHOTO_3.jpg" alt="Detail / finish"> -->
+        </div>
+
+        <!-- SLIDE 4 -->
+        <div class="carousel-slide">
+          <div class="slide-placeholder">
+            <div class="ph-icon">⌨</div>
+            <div class="ph-label">YOUR_PHOTO_4.jpg</div>
+          </div>
+          <!-- <img src="YOUR_PHOTO_4.jpg" alt="Hand wiring"> -->
+        </div>
+
+        <!-- SLIDE 5 -->
+        <div class="carousel-slide">
+          <div class="slide-placeholder">
+            <div class="ph-icon">⌨</div>
+            <div class="ph-label">YOUR_PHOTO_5.jpg</div>
+          </div>
+          <!-- <img src="YOUR_PHOTO_5.jpg" alt="On the desk"> -->
+        </div>
+
+        <!-- SLIDE 6 -->
+        <div class="carousel-slide">
+          <div class="slide-placeholder">
+            <div class="ph-icon">⌨</div>
+            <div class="ph-label">YOUR_PHOTO_SMOOTH.jpg</div>
+          </div>
+          <!-- <img src="YOUR_PHOTO_SMOOTH.jpg" alt="Smooth finish"> -->
+        </div>
+
+      </div><!-- /track -->
+
+      <button class="carousel-btn prev" id="carouselPrev" aria-label="Previous">&#8592;</button>
+      <button class="carousel-btn next" id="carouselNext" aria-label="Next">&#8594;</button>
+    </div><!-- /wrap -->
+
+    <div class="carousel-dots" id="carouselDots"></div>
+    <p class="carousel-caption">Shown: textured painted finish, black. Last slide: smooth finish option.</p>
+  </div>
+</div>
+</div><!-- /#top -->
+
+<!-- ── Product ── -->
+<section id="product" class="section reveal">
+  <div class="inner">
+    <h2>Dactyl Cygnus &mdash; Custom Split Ergonomic Keyboard</h2>
+    <div class="product-grid">
+      <div class="product-main">
+        <div class="price-tag">
+          &euro;369 wired &nbsp;/&nbsp; &euro;399 wireless
+          <small>Switches and keycaps not included. Premium options may affect final price.</small>
+        </div>
+        <p>I make fully custom Dactyl split keyboards, built to order and made by hand. Everything is configurable: layout and size, color, surface texture, finish or clear coat, switches, and keycaps. Each keyboard is made specifically for the buyer.</p>
+        <p>The cases are not raw 3D prints. Every case goes through a full finishing process: sanding, filler primer, and coating. This removes visible print lines and gives a clean, uniform surface that feels intentional and finished &mdash; not &ldquo;3D printed.&rdquo;</p>
+        <p>Each keyboard is hand-wired, assembled, and tested individually. The price reflects the time required for the full process, including customization, finishing, and manual wiring.</p>
+        <p>If you want a Dactyl that&rsquo;s built cleanly, looks good on your desk, and is made exactly to your preferences &mdash; this is it. Message me before ordering and we&rsquo;ll go through the details together. :)</p>
+        <blockquote>
+          <b>Note:</b> The &euro;369/&euro;399 price is for a base wired/wireless build. Switches and keycaps are not included. The shown configuration adds &euro;50.<br><br>
+          The keyboard shown has a <b>textured painted finish</b>. This is optional &mdash; smooth finish is available too. All finishes, colors, and surface treatments are customizable.<br><br>
+          <b>Free shipping for all EU countries.</b>
+        </blockquote>
+      </div>
+      <div class="product-sidebar">
+        <div class="sidebar-box">
+          <span class="sb-title">What you can configure</span>
+          <ul>
+            <li>Layout &amp; number of keys</li>
+            <li>Color (any RAL / custom)</li>
+            <li>Surface texture</li>
+            <li>Finish / clear coat</li>
+            <li>Switches</li>
+            <li>Keycaps</li>
+            <li>Wired or wireless</li>
+            <li>Tenting / tilt angle</li>
+          </ul>
+        </div>
+        <div class="sidebar-box">
+          <span class="sb-title">Every build includes</span>
+          <ul>
+            <li>Full case finishing</li>
+            <li>Hand wiring</li>
+            <li>QMK / ZMK firmware</li>
+            <li>Assembled &amp; tested</li>
+            <li>Pre-order consultation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ── Photos (detail gallery) ── -->
+<section id="photos" class="section reveal">
+  <div class="inner">
+    <h2>Gallery</h2>
+    <p class="gallery-note">Textured painted finish shown. Last image: smooth finish option.</p>
+    <div class="gallery-grid">
+      <div class="g-wrap"><img src="YOUR_PHOTO_1.jpg" alt="Front view"><div class="g-cap">Front view</div></div>
+      <div class="g-wrap"><img src="YOUR_PHOTO_2.jpg" alt="Side view"><div class="g-cap">Side view</div></div>
+      <div class="g-wrap"><img src="YOUR_PHOTO_3.jpg" alt="Detail / finish"><div class="g-cap">Detail / finish</div></div>
+      <div class="g-wrap"><img src="YOUR_PHOTO_4.jpg" alt="Hand wiring"><div class="g-cap">Hand wiring</div></div>
+      <div class="g-wrap"><img src="YOUR_PHOTO_5.jpg" alt="On the desk"><div class="g-cap">On the desk</div></div>
+      <div class="g-wrap"><img src="YOUR_PHOTO_SMOOTH.jpg" alt="Smooth finish"><div class="g-cap">Smooth finish option</div></div>
+    </div>
+    <div class="gif-wrap">
+      <img src="YOUR_ANIMATION.gif" alt="Build animation">
+      <div class="g-cap">Build / detail animation</div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ── Story ── -->
+<section id="story" class="section reveal">
+  <div class="inner">
+    <h2>About me / my story</h2>
+    <div class="placeholder">[ PLACEHOLDER &mdash; Fill this in with your own words. ]</div>
+    <p>I&rsquo;m [your name], based in Slovenia. I got into ergonomic keyboards [because of RSI / curiosity / typing a lot / ...] and at some point realized the only way to get exactly what I wanted was to build it myself. What started as building one for myself turned into building them for others.</p>
+    <div class="placeholder">[ Tell your story: How did you start? What made you go from hobbyist to builder? What do you care about? Why the Dactyl Cygnus? How long does one build take? ]</div>
+    <p>I build every keyboard alone, from start to finish. I print the case, sand it, prime it, coat it, hand-wire every switch, flash the firmware, and test it before it ships. There&rsquo;s no assembly line. No batch production. Each one is a single build.</p>
+    <p>If you have questions, message me. I reply to everything and I&rsquo;m happy to talk through what you want before you commit to anything.</p>
+  </div>
+</section>
+
+<hr>
+
+<!-- ── Process ── -->
+<section id="process" class="section reveal">
+  <div class="inner">
+    <h2>The process &mdash; what goes into each keyboard</h2>
+    <table class="process">
+      <tr><th>Step</th><th>What happens</th></tr>
+      <tr><td>1. Consultation</td><td>We talk about your layout, color, surface, switches, keycaps, and any other preferences.</td></tr>
+      <tr><td>2. 3D printing</td><td>The case is printed to your configuration. Print settings are tuned for structural quality.</td></tr>
+      <tr><td>3. Finishing</td><td>Every surface is sanded, sprayed with filler primer, sanded again, and coated. Print lines are gone.</td></tr>
+      <tr><td>4. Hand wiring</td><td>Every switch is wired by hand &mdash; no PCB. This takes time but gives full flexibility on layout.</td></tr>
+      <tr><td>5. Assembly</td><td>Controller, TRRS / wireless module, switches, and keycaps are installed.</td></tr>
+      <tr><td>6. Firmware &amp; testing</td><td>QMK or ZMK is flashed and every key is tested before shipping.</td></tr>
+      <tr><td>7. Shipping</td><td>Packaged carefully and shipped. Free to all EU countries.</td></tr>
+    </table>
+  </div>
+</section>
+
+<hr>
+
+<!-- ── Pricing ── -->
+<section id="pricing" class="section reveal">
+  <div class="inner">
+    <h2>Pricing</h2>
+    <table class="pricing">
+      <tr><th>Option</th><th>Price</th><th>Notes</th></tr>
+      <tr><td>Base &mdash; Wired</td><td class="price-col">&euro;369</td><td>Switches &amp; keycaps not included</td></tr>
+      <tr><td>Base &mdash; Wireless (ZMK)</td><td class="price-col">&euro;399</td><td>Switches &amp; keycaps not included</td></tr>
+      <tr><td>Shown configuration (textured + color)</td><td class="price-col">+&euro;50</td><td>On top of base price</td></tr>
+      <tr><td>Premium finishes / special colors</td><td class="price-col">TBD</td><td>Ask first</td></tr>
+      <tr><td>Shipping &mdash; EU</td><td class="price-col">Free</td><td>&nbsp;</td></tr>
+      <tr><td>Shipping &mdash; outside EU</td><td class="price-col">Ask</td><td>Possible, message me first</td></tr>
+    </table>
+    <p class="pricing-note">All prices include the full build: case, finishing, wiring, firmware, assembly, and testing. Switches and keycaps can be added on request.</p>
+  </div>
+</section>
+
+<hr>
+
+<!-- ── FAQ ── -->
+<section id="faq" class="section reveal">
+  <div class="inner">
+    <h2>FAQ</h2>
+    <div class="faq-item">
+      <div class="q">Do I need to know how to program a keyboard?</div>
+      <div class="a">No. I flash the firmware before shipping. The keyboard works out of the box. If you want to remap keys later, QMK/ZMK both have easy tools for that.</div>
+    </div>
+    <div class="faq-item">
+      <div class="q">What switches do you recommend?</div>
+      <div class="a">Totally up to you. Tactile (e.g. Boba U4, Gazzew) and linear (e.g. Gateron Yellow) are popular choices. Ask me if unsure.</div>
+    </div>
+    <div class="faq-item">
+      <div class="q">What keycap profiles work with a Dactyl?</div>
+      <div class="a">DSA, XDA, and MT3 all work well. Cherry profile is generally not recommended for curved keywells.</div>
+    </div>
+    <div class="faq-item">
+      <div class="q">How long does a build take?</div>
+      <div class="a"><span class="placeholder" style="display:inline;border:none;background:none;padding:0;">[ PLACEHOLDER: Fill in your typical lead time. ]</span></div>
+    </div>
+    <div class="faq-item">
+      <div class="q">Can I order from outside the EU?</div>
+      <div class="a">Yes, but shipping cost and import taxes are on you. Message me first.</div>
+    </div>
+    <div class="faq-item">
+      <div class="q">Is this really hand-wired?</div>
+      <div class="a">Yes. No PCBs. Every key is wired individually in a matrix. It takes a while but means I can do any layout.</div>
+    </div>
+    <div class="faq-item">
+      <div class="q">Can I see the Etsy listing?</div>
+      <div class="a"><a href="https://ergotype.etsy.com" target="_blank">ergotype.etsy.com</a> &mdash; though it&rsquo;s easier and cheaper to order directly here.</div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ── Contact ── -->
+<section id="contact" class="section reveal">
+  <div class="inner">
+    <h2>Contact / Order</h2>
+    <p style="margin-bottom:20px;">Message me before ordering. We&rsquo;ll go through what you want and I&rsquo;ll confirm availability and timeline.</p>
+
+    <div class="contact-row">
+      <span class="clabel">Email</span>
+      <span class="cval">
+        <a href="mailto:YOUR_EMAIL@gmail.com">YOUR_EMAIL@gmail.com</a>
+        &nbsp;
+        <button class="btn btn-sm" onclick="navigator.clipboard.writeText('YOUR_EMAIL@gmail.com');document.getElementById('copy-confirm').style.display='inline';setTimeout(function(){document.getElementById('copy-confirm').style.display='none';},2000);">Copy</button>
+        <span id="copy-confirm" class="copy-confirm">&#10003; copied</span>
+      </span>
+    </div>
+    <div class="contact-row">
+      <span class="clabel">Instagram</span>
+      <span class="cval"><a href="https://instagram.com/ergotype" target="_blank">@ergotype</a> &mdash; DMs open</span>
+    </div>
+    <div class="contact-row">
+      <span class="clabel">Etsy</span>
+      <span class="cval"><a href="https://ergotype.etsy.com" target="_blank">ergotype.etsy.com</a></span>
+    </div>
+
+    <div class="cta-buttons">
+      <a class="btn btn-primary" href="mailto:YOUR_EMAIL@gmail.com?subject=Dactyl%20Cygnus%20inquiry&body=Hi%2C%20I%27m%20interested%20in%20a%20Dactyl%20Cygnus%20build.%20Here%20are%20my%20preferences%3A%0A%0ALayout%3A%20%0AColor%3A%20%0ASurface%3A%20%0AWired%20or%20wireless%3A%20%0ASwitches%3A%20%0AKeycaps%3A%20%0A%0AAnything%20else%3A%20">&#9993;&nbsp; Send email</a>
+      <a class="btn btn-primary" href="https://instagram.com/ergotype" target="_blank">&#128247;&nbsp; Instagram DM</a>
+      <a class="btn" href="https://ergotype.etsy.com" target="_blank">View Etsy listing</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer reveal">
+  <div class="inner">
+    ErgoType &bull; Handbuilt Keyboards &bull; Slovenia<br>
+    <a href="https://ergotype.etsy.com">ergotype.etsy.com</a> &bull;
+    <a href="https://instagram.com/ergotype">instagram</a>
+    <div class="tagline-foot">Every keyboard is different. Every keyboard is yours.</div>
+  </div>
+</footer>
+
+<script>
+/* ── Theme toggle ── */
+const html = document.documentElement;
+const toggleBtn = document.getElementById('themeToggle');
+const saved = localStorage.getItem('et-theme') || 'dark';
+html.setAttribute('data-theme', saved);
+toggleBtn.addEventListener('click', () => {
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('et-theme', next);
+});
+toggleBtn.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleBtn.click(); }
+});
+
+/* ── Hamburger ── */
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+});
+document.querySelectorAll('.mobile-link').forEach(link => {
+  link.addEventListener('click', () => {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+  });
+});
+
+/* ── Carousel ── */
+const track   = document.getElementById('carouselTrack');
+const slides  = track.querySelectorAll('.carousel-slide');
+const dotsWrap = document.getElementById('carouselDots');
+const prevBtn = document.getElementById('carouselPrev');
+const nextBtn = document.getElementById('carouselNext');
+const captions = [
+  'Front view', 'Side view', 'Detail / finish',
+  'Hand wiring', 'On the desk', 'Smooth finish option'
+];
+let current = 0;
+const total = slides.length;
+
+// Build dots
+slides.forEach((_, i) => {
+  const dot = document.createElement('button');
+  dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+  dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+  dot.addEventListener('click', () => goTo(i));
+  dotsWrap.appendChild(dot);
+});
+
+function goTo(n) {
+  current = (n + total) % total;
+  track.style.transform = `translateX(-${current * 100}%)`;
+  dotsWrap.querySelectorAll('.carousel-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === current);
+  });
+}
+
+prevBtn.addEventListener('click', () => goTo(current - 1));
+nextBtn.addEventListener('click', () => goTo(current + 1));
+
+// Auto-advance every 5s
+let autoTimer = setInterval(() => goTo(current + 1), 5000);
+function resetTimer() {
+  clearInterval(autoTimer);
+  autoTimer = setInterval(() => goTo(current + 1), 5000);
+}
+prevBtn.addEventListener('click', resetTimer);
+nextBtn.addEventListener('click', resetTimer);
+
+// Touch / swipe
+const carouselEl = document.getElementById('carousel');
+let touchStartX = 0;
+carouselEl.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+}, { passive: true });
+carouselEl.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 40) {
+    goTo(dx < 0 ? current + 1 : current - 1);
+    resetTimer();
+  }
+}, { passive: true });
+
+/* ── Scroll reveal ── */
+const reveals = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      obs.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.07 });
+reveals.forEach(el => obs.observe(el));
+</script>
+
+</body>
+</html>
